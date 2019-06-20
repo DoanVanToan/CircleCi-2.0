@@ -7,7 +7,7 @@ jobs:
     environment:
       JVM_OPTS: -Xmx3200m
       # This is Android review pull request box (Not necessary to change)
-      ROOM_ID: "96370317"
+      ROOM_ID: "154995776"
       # Insert the chatwork accounts which you want to mention when the pull request was verified
       MEMBERS: "[To:2110258] Doan Van Toan"
       DEFAULT_BRANCH: "master"
@@ -28,14 +28,22 @@ jobs:
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-            if [[ 'master' == '${{DEFAULT_BRANCH}}' ]]; then
-              echo "build fabric"
-              gem update --system
-              gem install bundler
-              bundler update --bundler
-              bundle install
-              bundle exec fastlane beta
-            fi
+#            if [[ 'master' == '${{DEFAULT_BRANCH}}' ]]; then
+#              echo "build fabric"
+#              gem update --system
+#              gem install bundler
+#              bundler update --bundler
+#              bundle install
+#              bundle exec fastlane beta
+#            fi
+             export RG= if [$CIRCLE_BRANCH=="config_fastlane"]
+             echo $RG
+             export RG= if [${CIRCLE_BRANCH} == 'config_fastlane']
+             echo $RG
+             export RG= if [[${CIRCLE_BRANCH} == 'config_fastlane']]
+             echo $RG
+             export RG= if [[${CIRCLE_BRANCH} == "config_fastlane"]]
+             echo $RG
       - run:
           name: Run Tests
           command: ./gradlew lint test
