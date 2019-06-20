@@ -23,7 +23,7 @@ platform :android do
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
+  lane :beta do |data|
     puts("___CLEAN GRADLE__")
     gradle(task: "clean")
 
@@ -33,10 +33,10 @@ platform :android do
            build_type: "Debug")
 
     puts("___DEPLOY TO CRASHLYTICS BETA__")
-    crashlytics(api_token: "731ae80443a5d1005298e4d8934ce1bc9b4de457",
-                build_secret: "73f66530d9528c3803ac54856093109a33d9cac267fc34e6f60afb928a29b22a",
-                emails: "doan.van.toan@sun-asterisk.com, chu.thanh.hung@sun-asterisk.com",
-                notes: "Deploy by circle ci the 2nd time")
+    crashlytics(api_token: data[:api_token],
+                build_secret: data[:build_secret],
+                emails: data[:qa_emails],
+                notes: data[:message])
   end
 end
 
