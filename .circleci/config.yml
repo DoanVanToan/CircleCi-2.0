@@ -41,7 +41,8 @@ jobs:
               bundle install
               bundle exec fastlane beta
               curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
-                              "body= TO ALL >>> cc $QA_MEMBERS
+                              "body= TO ALL >>>
+                              cc $QA_MEMBERS
                               [info][title]Auto message[/title]The latest code was deployed into fabric (F)(F)(F)[/info]
                               "\
                               "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
