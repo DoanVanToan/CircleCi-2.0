@@ -16,7 +16,6 @@ jobs:
       STAGING_BRANCH: "master"
       # QA EMAILS
       QA_EMAILS: "chu.thanh.hung@sun-asterisk.com, doan.van.toan@sun-asterisk.com"
-      GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
     steps:
       - checkout
       - restore_cache:
@@ -31,12 +30,15 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
+      - run: 
+          name: add variable
+          command: echo 'export GIT_COMMIT_DESC="git log --format=oneline -n 1 $CIRCLE_SHA1"' >> $BASH_ENV
       - run: 
           name: Test build
           command: echo $GIT_COMMIT_DESC
+      - run:
+          name: Run Tests
+          command: ./gradlew lint test
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
