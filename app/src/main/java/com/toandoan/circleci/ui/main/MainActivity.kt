@@ -1,8 +1,8 @@
-package com.toandoan.circleci
+package com.toandoan.circleci.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.toandoan.circleci.ui.main.MainFragment
+import com.toandoan.circleci.R
 
 class MainActivity : AppCompatActivity() {
 
