@@ -10,7 +10,7 @@ jobs:
       ROOM_ID: "154995776"
       # Insert the chatwork accounts which you want to mention when the pull request was verified
       MEMBERS: "[To:2110258] Doan Van Toan"
-      DEFAULT_BRANCH: "master"
+      DEFAULT_BRANCH: "config_fastlane"
     steps:
       - checkout
       - restore_cache:
@@ -28,8 +28,7 @@ jobs:
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-            if [ "${CIRCLE_BRANCH}" == "config_fastlane" ]; then
-              echo "build fabric"
+            if [ "${CIRCLE_BRANCH}" == "${DEFAULT_BRANCH}" ]; then
               gem update --system
               gem install bundler
               bundler update --bundler
