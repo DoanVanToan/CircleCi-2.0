@@ -28,7 +28,7 @@ jobs:
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-            if [[ '${{CIRCLE_BRANCH}}' == 'config_fastlane' ]]; then
+            if [[ 'config_fastlane' == 'config_fastlane' ]]; then
               echo "build fabric"
               gem update --system
               gem install bundler
