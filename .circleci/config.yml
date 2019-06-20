@@ -28,22 +28,14 @@ jobs:
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-#            if [[ 'master' == '${{DEFAULT_BRANCH}}' ]]; then
-#              echo "build fabric"
-#              gem update --system
-#              gem install bundler
-#              bundler update --bundler
-#              bundle install
-#              bundle exec fastlane beta
-#            fi
-             export RG= if [$CIRCLE_BRANCH=="config_fastlane"] then "true" else "false" fi
-             echo $RG
-             export RG= if [${CIRCLE_BRANCH} == 'config_fastlane'] then "true" else "false" fi
-             echo $RG
-             export RG= if [[${CIRCLE_BRANCH} == 'config_fastlane']] then "true" else "false" fi
-             echo $RG
-             export RG= if [[${CIRCLE_BRANCH} == "config_fastlane"]] then "true" else "false" fi
-             echo $RG
+            if [ "${CIRCLE_BRANCH}" == "config_fastlane" ]; then
+              echo "build fabric"
+              gem update --system
+              gem install bundler
+              bundler update --bundler
+              bundle install
+              bundle exec fastlane beta
+            fi
       - run:
           name: Run Tests
           command: ./gradlew lint test
