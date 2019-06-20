@@ -8,8 +8,10 @@ jobs:
       JVM_OPTS: -Xmx3200m
       # This is Android review pull request box (Not necessary to change)
       ROOM_ID: "154995776"
-      # Insert the chatwork accounts which you want to mention when the pull request was verified
-      MEMBERS: "[To:2110258] Doan Van Toan"
+      # Insert the dev accounts which you want to mention when the pull request was verified
+      MEMBERS: "[To:2110258]"
+      # Insert the QA accounts which you want to mention when the latest code was deployed
+      QA_MEMBERS: "[To:2253420]"
       # The staging branch.
       STAGING_BRANCH: "master"
     steps:
@@ -39,7 +41,7 @@ jobs:
               bundle install
               bundle exec fastlane beta
               curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
-                              "body= TO ALL >>>
+                              "body= TO ALL >>> cc $QA_MEMBERS
                               [info][title]Auto message[/title]The latest code was deployed into fabric (F)(F)(F)[/info]
                               "\
                               "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
@@ -67,7 +69,7 @@ jobs:
           name: Sending notification on success
           when: on_success
           command: |
-            if [[ true ]];  then
+            if [[ "${CIRCLE_BRANCH}" != "${STAGING_BRANCH}" ]];  then
               curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
                 "body= $MEMBERS [info][title]Repository : $CIRCLE_PROJECT_REPONAME (ok2)[/title]Your pull request is successful (F)(F)(F)
               -> Click here for more detail: $CIRCLE_BUILD_URL
