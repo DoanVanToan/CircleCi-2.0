@@ -33,10 +33,11 @@ platform :android do
            build_type: "Debug")
 
     puts("___DEPLOY TO CRASHLYTICS BETA__")
+    commit = last_git_commit
     crashlytics(api_token: data[:api_token],
                 build_secret: data[:build_secret],
                 emails: data[:qa_emails],
-                notes: data[:message])
+                notes: commit[:message])
   end
 end
 
