@@ -10,7 +10,8 @@ jobs:
       ROOM_ID: "154995776"
       # Insert the chatwork accounts which you want to mention when the pull request was verified
       MEMBERS: "[To:2110258] Doan Van Toan"
-      DEFAULT_BRANCH: "config_fastlane"
+      # The staging branch.
+      STAGING_BRANCH: "master"
     steps:
       - checkout
       - restore_cache:
@@ -25,19 +26,24 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./gradlew lint test
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-            if [ "${CIRCLE_BRANCH}" == "${DEFAULT_BRANCH}" ]; then
+            if [ "${CIRCLE_BRANCH}" == "${STAGING_BRANCH}" ]; then
               gem update --system
               gem install bundler
               bundler update --bundler
               bundle install
               bundle exec fastlane beta
+              curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
+                              "body= TO ALL >>>
+                              [info][title]Auto message[/title]The latest code was deployed into fabric (F)(F)(F)[/info]
+                              "\
+                              "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
             fi
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: app/build/reports
           destination: reports
