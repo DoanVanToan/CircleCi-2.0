@@ -41,7 +41,7 @@ jobs:
               gem install bundler
               bundler update --bundler
               bundle install
-              bundle exec fastlane beta api_token:"$FABRIC_API_TOKEN", build_secret:"$BUILD_SECRET", qa_emails:"$QA_EMAILS", message:"I'm on the CI/CD",
+              bundle exec fastlane beta api_token:"$FABRIC_API_TOKEN" build_secret:"$BUILD_SECRET" qa_emails:"$QA_EMAILS" message:"I'm on the CI/CD"
               curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
                               "body= TO ALL >>>
                               cc $QA_MEMBERS
