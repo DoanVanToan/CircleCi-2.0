@@ -25,9 +25,6 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
@@ -39,6 +36,9 @@ jobs:
               bundle install
               bundle exec fastlane beta
             fi
+      - run:
+          name: Run Tests
+          command: ./gradlew lint test
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: app/build/reports
           destination: reports
