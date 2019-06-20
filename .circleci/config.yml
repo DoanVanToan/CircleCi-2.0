@@ -7,10 +7,11 @@ jobs:
     environment:
       JVM_OPTS: -Xmx3200m
       # This is Android review pull request box (Not necessary to change)
-      ROOM_ID: "96370317"
+      ROOM_ID: "154995776"
       # Insert the chatwork accounts which you want to mention when the pull request was verified
       MEMBERS: "[To:2110258] Doan Van Toan"
-      DEFAULT_BRANCH: "master"
+      # The staging branch.
+      STAGING_BRANCH: "master"
     steps:
       - checkout
       - restore_cache:
@@ -31,13 +32,17 @@ jobs:
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
-            if [[ "${CIRCLE_BRANCH}" == DEFAULT_BRANCH ]]; then
-              echo "build fabric"
+            if [ "${CIRCLE_BRANCH}" == "${STAGING_BRANCH}" ]; then
               gem update --system
               gem install bundler
               bundler update --bundler
               bundle install
               bundle exec fastlane beta
+              curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
+                              "body= TO ALL >>>
+                              [info][title]Auto message[/title]The latest code was deployed into fabric (F)(F)(F)[/info]
+                              "\
+                              "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
             fi
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: app/build/reports

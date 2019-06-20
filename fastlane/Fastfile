@@ -38,13 +38,6 @@ platform :android do
                 emails: "doan.van.toan@sun-asterisk.com, chu.thanh.hung@sun-asterisk.com",
                 notes: "Deploy by circle ci the 2nd time")
   end
-
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
-  end
-
 end
 
 
