@@ -16,6 +16,7 @@ jobs:
       STAGING_BRANCH: "master"
       # QA EMAILS
       QA_EMAILS: "chu.thanh.hung@sun-asterisk.com, doan.van.toan@sun-asterisk.com"
+      GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
     steps:
       - checkout
       - restore_cache:
@@ -33,6 +34,9 @@ jobs:
       - run:
           name: Run Tests
           command: ./gradlew lint test
+      - run 
+          name: Test build
+          command: echo $GIT_COMMIT_DESC
       - deploy:
           name: Deploy into Fabric with master branch
           command: |
