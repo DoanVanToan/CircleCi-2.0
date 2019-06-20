@@ -36,13 +36,13 @@ jobs:
 #              bundle install
 #              bundle exec fastlane beta
 #            fi
-             export RG= if [$CIRCLE_BRANCH=="config_fastlane"]
+             export RG= if [$CIRCLE_BRANCH=="config_fastlane"] then true else false fi
              echo $RG
-             export RG= if [${CIRCLE_BRANCH} == 'config_fastlane']
+             export RG= if [${CIRCLE_BRANCH} == 'config_fastlane'] then true else false fi
              echo $RG
-             export RG= if [[${CIRCLE_BRANCH} == 'config_fastlane']]
+             export RG= if [[${CIRCLE_BRANCH} == 'config_fastlane']] then true else false fi
              echo $RG
-             export RG= if [[${CIRCLE_BRANCH} == "config_fastlane"]]
+             export RG= if [[${CIRCLE_BRANCH} == "config_fastlane"]] then true else false fi
              echo $RG
       - run:
           name: Run Tests
