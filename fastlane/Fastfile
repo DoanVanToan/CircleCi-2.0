@@ -13,6 +13,11 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+before_all do
+  Dotenv.overload '.env.info'
+end
+
+
 default_platform(:android)
 
 platform :android do
@@ -24,21 +29,70 @@ platform :android do
 
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do |data|
-    puts("___CLEAN GRADLE__")
     gradle(task: "clean")
 
-    puts("___BUILD STAGING DEBUG APK__")
     gradle(task: "assemble",
            flavor: "staging",
            build_type: "Debug")
 
-    puts("___DEPLOY TO CRASHLYTICS BETA__")
     commit = last_git_commit
+    qa_emails = "#{ENV['FABRIC_QA_EMAILS']}"
     crashlytics(api_token: data[:api_token],
                 build_secret: data[:build_secret],
-                emails: data[:qa_emails],
+                emails: qa_emails,
                 notes: commit[:message])
+
   end
+
+  desc "Notify CW when deploy successful"
+  lane :notify_beta do |data|
+    commit = last_git_commit
+    room_id = "#{ENV['ROOM_ID']}"
+
+    message = %Q(#{ENV['QA_MEMBERS']}
+  The latest code was deployed into Fabric (F)(F)(beer)
+  - Commit:  #{commit[:abbreviated_commit_hash]} -> #{commit[:message]})
+
+    chatwork(roomid: room_id,
+             api_token: data[:cw_api_token],
+             message: message)
+  end
+
+  desc "Notify CW when build success"
+  lane :notify_build_success do |data|
+    commit = last_git_commit
+    room_id = "#{ENV['ROOM_ID']}"
+    puts room_id
+
+    message = %Q(#{ENV['DEV_MEMBERS']}
+  Your pull request is successful (F)(F)(F)
+  ---> Click here for more detail: #{data[:circle_build_url]}
+  - Branch:  #{data[:circle_branch]}
+  - Commit:  #{commit[:message]}  - Pull request: #{data[:circle_pull_request]})
+
+    chatwork(roomid: room_id,
+             api_token: data[:cw_api_token],
+             message: message,
+             success: true)
+  end
+
+  desc "Notify CW when build failure"
+  lane :notify_build_failed do |data|
+    commit = last_git_commit
+    room_id = "#{ENV['ROOM_ID']}"
+
+    message = %Q(#{ENV['DEV_MEMBERS']}
+  Your pull request is failure (error)
+  ---> Click here for more detail: #{data[:circle_build_url]}
+  - Branch:  #{data[:circle_branch]}
+  - Commit:  #{commit[:message]}  - Pull request: #{data[:circle_pull_request]})
+
+    chatwork(roomid: room_id,
+             api_token: data[:cw_api_token],
+             message: message,
+             success: false)
+    end
+
 end
 
 

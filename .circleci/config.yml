@@ -6,16 +6,8 @@ jobs:
       - image: circleci/android:api-28-alpha
     environment:
       JVM_OPTS: -Xmx3200m
-      # This is Android review pull request box (Not necessary to change)
-      ROOM_ID: "154995776"
-      # Insert the dev accounts which you want to mention when the pull request was verified
-      MEMBERS: "[To:2110258]"
-      # Insert the QA accounts which you want to mention when the latest code was deployed
-      QA_MEMBERS: "[To:2253420]"
       # The staging branch.
       STAGING_BRANCH: "master"
-      # QA EMAILS
-      QA_EMAILS: "chu.thanh.hung@sun-asterisk.com, doan.van.toan@sun-asterisk.com"
     steps:
       - checkout
       - restore_cache:
@@ -41,13 +33,8 @@ jobs:
               gem install bundler
               bundler update --bundler
               bundle install
-              bundle exec fastlane beta api_token:"$FABRIC_API_TOKEN" build_secret:"$BUILD_SECRET" qa_emails:"$QA_EMAILS"
-              curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
-                              "body= TO ALL >>>
-                              cc $QA_MEMBERS
-                              [info][title]Auto message[/title]The latest code was deployed into fabric (F)(F)(F)[/info]
-                              "\
-                              "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
+              bundle exec fastlane beta api_token:"$FABRIC_API_TOKEN" build_secret:"$BUILD_SECRET"
+              bundle exec fastlane notify_beta cw_api_token:"$CHATWORK_API_KEY"
             fi
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: app/build/reports
@@ -59,13 +46,11 @@ jobs:
           when: on_fail
           command: |
             if [[ true ]];  then
-              curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
-                "body= $MEMBERS [info][title]Repository : $CIRCLE_PROJECT_REPONAME (problem)[/title]Your pull request is failed (pray)
-              -> Click here for more detail: $CIRCLE_BUILD_URL
-              - Branch: $CIRCLE_BRANCH
-              - Pull request: $CIRCLE_PULL_REQUEST[/info]
-                "\
-                "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
+              gem update --system
+              gem install bundler
+              bundler update --bundler
+              bundle install
+              bundle exec fastlane notify_build_failed circle_build_url:"$CIRCLE_BUILD_URL" circle_pull_request:"$CIRCLE_PULL_REQUEST" circle_branch:"$CIRCLE_BRANCH" cw_api_token:"$CHATWORK_API_KEY"
             fi
 
       - run:
@@ -73,12 +58,10 @@ jobs:
           when: on_success
           command: |
             if [[ "${CIRCLE_BRANCH}" != "${STAGING_BRANCH}" ]];  then
-              curl -X POST -H "X-ChatWorkToken: $CHATWORK_API_KEY" -d \
-                "body= $MEMBERS [info][title]Repository : $CIRCLE_PROJECT_REPONAME (ok2)[/title]Your pull request is successful (F)(F)(F)
-              -> Click here for more detail: $CIRCLE_BUILD_URL
-              - Branch: $CIRCLE_BRANCH
-              - Pull request: $CIRCLE_PULL_REQUEST[/info]
-                "\
-                "https://api.chatwork.com/v2/rooms/$ROOM_ID/messages"
+              gem update --system
+              gem install bundler
+              bundler update --bundler
+              bundle install
+              bundle exec fastlane notify_build_success circle_build_url:"$CIRCLE_BUILD_URL" circle_pull_request:"$CIRCLE_PULL_REQUEST" circle_branch:"$CIRCLE_BRANCH" cw_api_token:"$CHATWORK_API_KEY"
             fi
 
