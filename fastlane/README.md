@@ -26,6 +26,21 @@ Runs all the tests
 fastlane android beta
 ```
 Submit a new Beta Build to Crashlytics Beta
+### android notify_beta
+```
+fastlane android notify_beta
+```
+Notify CW when deploy successful
+### android notify_build_success
+```
+fastlane android notify_build_success
+```
+Notify CW when build success
+### android notify_build_failed
+```
+fastlane android notify_build_failed
+```
+Notify CW when build success
 
 ----
 
